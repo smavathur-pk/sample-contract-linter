@@ -1,0 +1,450 @@
+swagger: '2.0'
+info:
+  version: 1.0.0
+  title: PK Kitchen Sink
+  description: |
+
+    # What does this API do?
+    The PK Kitchen Sink API manages the registration of your pet in our pet tracking system. Lorem ipsum dolor sit amet, consectetur adipiscing elit. *This is Italic*. Sed tincidunt massa venenatis tellus volutpat, sed auctor arcu luctus. Vestibulum sit amet condimentum quam. Suspendisse a lorem tortor.
+
+    Proin felis augue, euismod vitae egestas sit amet, consectetur eget nisl. Morbi tristique, ex id fringilla consequat, velit est laoreet magna, at varius magna enim ut lacus.
+
+    # Intended Audiences
+      1. Partners Connecting to Consume Pet Information
+      2. Partners contributing the creation of new pets
+     
+    # Common Uses of this API
+    1. As a pet owner I am able to get a list of my pets.
+    2. As a pet owner I am able to add activities to a pet so that I can keep an activity record.  
+
+    ----
+
+    Go to this external link example [Vanick Digital](http://www.vanick.com) for help.
+  termsOfService: 'http://swagger.io/terms/'
+  contact:
+    name: Swagger API Team
+    email: foo@example.com
+  license:
+    name: MIT
+    url: 'https://github.com/angular/angular.js/blob/master/LICENSE'
+host: api.someurl.com
+basePath: /api/v3
+schemes:
+  - https
+consumes:
+  - application/json
+  - application/xml
+produces:
+  - application/json
+  - application/xml
+paths:
+  /pets:
+    get:
+      tags:
+        - pets
+      summary: This operation returns all pets from the system that the requesting user has access to see.
+      description: |
+        This operation Returns all pets from the system that the requesting user has access to see.
+
+          - If you do not add any query string parameters, this operation will return all pets in a paginated collection with 25 pets in each response.
+          - You can use ?country="us" you will get all of your pets from the US
+          - You can use ?group="Sporting Group" to return all of your pets from a specific Group
+          - You can use ?breed="Terrier" to return all of your pets from a specific breed.
+          - You can use any of these query sting variables in combination to do your search.
+         
+        If there are more than 25 pets returned, the results will be paginated.
+         
+      operationId: findPets
+      parameters:
+        - $ref: '#/parameters/AuthorizationHeader'
+        - $ref: '#/parameters/AcceptHeader'
+        - $ref: '#/parameters/pageQuery'
+        - $ref: '#/parameters/countQuery'
+        - $ref: '#/parameters/breedQuery'
+        - $ref: '#/parameters/countryQuery'
+      responses:
+        '200':
+          $ref: '#/definitions/Pet'
+        '400':
+          $ref: '#/responses/BadRequest'
+        '401':
+          $ref: '#/responses/Unauthorized'
+        '403':
+          $ref: '#/responses/Unauthorized'
+        '429':
+          $ref: '#/responses/RequestLimitExceeded'
+        '500':
+          $ref: '#/responses/InternalServiceError'
+        '503':
+          $ref: '#/responses/ServiceUnavailable'
+    post:
+      tags:
+        - pets
+      summary: Creates a new pet in the store.  Duplicates are allowed.
+      description: Creates a new pet in the store.  Duplicates are allowed.
+      externalDocs:
+        description: Kitchen Sink Documentation
+        url: https/domain.com/kitchensink/postDocumentation
+      operationId: addPet
+      parameters:
+        - $ref: '#/parameters/AuthorizationHeader'
+        - $ref: '#/parameters/AcceptHeader'
+        - $ref: '#/parameters/Content-TypeHeader'
+        - name: pet
+          in: body
+          description: Pet to add to the store
+          required: true
+          schema:
+            $ref: '#/definitions/NewPet'
+      responses:
+        '200':
+          $ref: '#/definitions/Pet'
+        '201':
+          description: Pet Successfully Created
+          headers:
+            Location:
+              description: URI of the returned or created resource
+              type: string
+          schema:
+            $ref: '#/definitions/Pet'
+        '400':
+          $ref: '#/responses/BadRequest'
+        '401':
+          $ref: '#/responses/Unauthorized'
+        '403':
+          $ref: '#/responses/Unauthorized'
+        '404':
+          $ref: '#/responses/Unauthorized'
+        '429':
+          $ref: '#/responses/RequestLimitExceeded'
+        '500':
+          $ref: '#/responses/InternalServiceError'
+        '503':
+          $ref: '#/responses/ServiceUnavailable'
+      produces:
+        - application/json
+        - application/xml
+        - application/csv
+  '/pets/{id}':
+    get:
+      tags:
+        - pets
+      summary: Returns a user based on a single ID.
+      description: 'Returns a user based on a single ID, if the user does not have access to the pet a 403 Unauthorized response will be given.'
+      operationId: find pet by id
+      parameters:
+        - $ref: '#/parameters/AuthorizationHeader'
+        - $ref: '#/parameters/AcceptHeader'
+        - $ref: '#/parameters/idPath'
+      responses:
+        '400':
+          $ref: '#/responses/BadRequest'
+        '401':
+          $ref: '#/responses/Unauthorized'
+        '403':
+          $ref: '#/responses/Unauthorized'
+        '404':
+          $ref: '#/responses/NotFound'
+        '429':
+          $ref: '#/responses/RequestLimitExceeded'
+        '500':
+          $ref: '#/responses/InternalServiceError'
+        '503':
+          $ref: '#/responses/ServiceUnavailable'
+    put:
+      tags:
+        - pets
+      summary: Update an existing pet.
+      description: Update an existing pet
+      operationId: UpdatePed
+      parameters:
+        - $ref: '#/parameters/AuthorizationHeader'
+        - $ref: '#/parameters/AcceptHeader'
+        - $ref: '#/parameters/idPath'
+        - $ref: '#/parameters/Content-TypeHeader'
+        - name: pet
+          in: body
+          description: Data to be used to update the existing pet
+          required: true
+          schema:
+            $ref: '#/definitions/NewPet'
+      responses:
+        '200':
+          description: Pet Successfully Updated
+          schema:
+            $ref: '#/definitions/Pet'
+        '400':
+          $ref: '#/responses/BadRequest'
+        '401':
+          $ref: '#/responses/Unauthorized'
+        '403':
+          $ref: '#/responses/Unauthorized'
+        '404':
+          $ref: '#/responses/NotFound'
+        '429':
+          $ref: '#/responses/RequestLimitExceeded'
+        '500':
+          $ref: '#/responses/InternalServiceError'
+        '503':
+          $ref: '#/responses/ServiceUnavailable'
+    delete:
+      tags:
+        - pets
+      summary: Delete a single pet based on provided Pet ID.
+      description: Delete a single pet based on provided Pet ID.
+      operationId: deletePet
+      parameters:
+        - $ref: '#/parameters/AuthorizationHeader'
+        - $ref: '#/parameters/idPath'
+      responses:
+        '204':
+          description: Pet Successfully Deleted
+        '400':
+          $ref: '#/responses/BadRequest'
+        '401':
+          $ref: '#/responses/Unauthorized'
+        '403':
+          $ref: '#/responses/Unauthorized'
+        '404':
+          $ref: '#/responses/NotFound'
+        '429':
+          $ref: '#/responses/RequestLimitExceeded'
+        '500':
+          $ref: '#/responses/InternalServiceError'
+        '503':
+          $ref: '#/responses/ServiceUnavailable'
+definitions:
+  Error:
+    type: object
+    required:
+      - code
+      - title
+    properties:
+      id:
+        type: string
+        example: 8eaeac83-edd8-4977-880d-053b42e827e0
+        description: A unique identifier for this particular occurrence of the problem. Used to troubleshoot this occurance of this error.
+      code:
+        type: string
+        example: XB400
+        description: 'An application-specific error code, expressed as a string value.'
+      title:
+        type: string
+        example: User First Name cannot be empty
+        description: 'A short, human-readable summary of the problem that SHOULD NOT change from occurrence to occurrence of the problem, except for purposes of localization.'
+      detail:
+        type: string
+        example: Enter a value in the First Name field. If you do not know the first name then enter a space. The First Name field cannot be submitted with a null.
+        description: 'A human-readable explanation specific to this occurrence of the problem. Like title, this field’s value can be localized.'
+      Links:
+        type: array
+        items:
+          $ref: '#/definitions/Link'
+  Errors:
+    type: array
+    items:
+      $ref: '#/definitions/Error'
+  Link:
+    type: object
+    required:
+      - type
+      - href
+      - description
+    properties:
+      type:
+        type: string
+        description: A name that describes the categorical purpose of the link
+        example: 'help, self,'
+      href:
+        type: string
+        description: The URI for the link
+        example: 'http://developer.domain.com/dir/ref'
+      description:
+        type: string
+        description: The human readable definition of the purpose of this link
+        example: Link to the developer portal documentation.
+  NewPet:
+    type: object
+    description: |
+      This is the base collection of information that we need to know about your pet to perform our services.
+    required:
+      - name
+    properties:
+      name:
+        type: string
+        example: Barker the Beagle
+        description: The name give to the pet by its owner
+      tag:
+        type: string
+        example: Dog
+      createdOnDate:
+        description: ISO8601 date-time that the pet record was created
+        type: string
+        format: dateTime
+        example: '2016-04-16T16:06:05Z'
+        readOnly: true
+      group:
+        description: AKC Dog Breed Groups
+        type: string
+        default: Miscellaneous Class
+        example: Herding Group
+        enum:
+          - Herding Group
+          - Hound Group
+          - Non-Sporting Group
+          - Sporting Group
+          - Terrier Group
+          - Toy Group
+          - Working Group
+          - Foundation Stock Service
+          - Miscellaneous Class
+      breed:
+        description: AKC Dog Breed
+        type: string
+        example: Old English Sheepdog
+  Paging:
+    type: object
+    properties:
+      next:
+        type: string
+        description: holds next pointer
+        example: someurl
+      prev:
+        type: string
+        description: Link to the previous page. Only if the current page is greater than 1.
+        example: //api.example.com/orders?page=1&count=25"
+      page:
+        type: integer
+        format: int32
+        description: current page in the pages collection
+        example: 1
+      totalPages:
+        type: integer
+        format: int32
+        description: total number of pages in the collection
+        example: 32
+      itemsPerPage:
+        type: integer
+        format: int32
+        description: number of records on a page
+        example: 25
+  Pet:
+    type: object
+    description: |
+      This is the base collection of information that we need to know about your pet to perform our services. This is the base information that will be returned when you do a pet search. Additional information will be added to this object for other operations.  
+    required:
+      - id
+    properties:
+      id:
+        description: This is the id that is created by our system to uniquely identify your pet.
+        type: integer
+        format: int64
+        pattern: '^[0-9]{6,6}$'
+    allOf:
+      - $ref: '#/definitions/Paging'
+  PetsCollection:
+    allOf:
+      - $ref: '#/definitions/Paging'
+      - type: object
+        properties:
+          data:
+            type: array
+            items:
+              $ref: '#/definitions/Pet'
+parameters:
+  AuthorizationHeader:
+    name: Authorization
+    in: header
+    type: string
+    required: true
+    description: This is the value of your OAuth2 Bearer token. The value should be structured like "Bearer" + " " + OAuth Token
+  AcceptHeader:
+    name: Accept
+    description: The requested format for the return payload
+    in: header
+    required: true
+    type: string
+    enum:
+      - application/json
+      - application/xml
+  idPath:
+    name: id
+    in: path
+    description: ID of pet to be accessed
+    required: true
+    type: integer
+    format: int64
+  Content-TypeHeader:
+    name: Content-Type
+    description: The format of the request body
+    in: header
+    required: true
+    type: string
+    enum:
+      - application/json
+      - application/xml
+  pageQuery:
+    name: page
+    in: query
+    description: the requested page number from the collection of search results that you would like to have returned
+    default: 1
+    type: integer
+    format: int32
+  countQuery:
+    name: count
+    in: query
+    type: integer
+    format: int32
+    default: 25
+    description: the number of records to return in a single page of search results
+  breedQuery:
+    name: breed
+    in: query
+    description: tags to filter by
+    required: false
+    type: string
+    collectionFormat: csv
+  countryQuery:
+    name: country
+    in: query
+    description: Country code for the country you would like to see pets from
+    required: false
+    type: string
+    x-chance: country
+  PrefersHeader:
+    name: Prefers
+    in: header
+    type: string
+    required: false
+    description: asdfa
+  LocationHeader:
+    name: Location
+    in: header
+    type: string
+    description: URI of the newly created resource
+responses:
+  BadRequest:
+    description: Bad Request
+    schema:
+      $ref: '#/definitions/Errors'
+  Unauthorized:
+    description: Unauthorized Request
+    schema:
+      $ref: '#/definitions/Errors'
+  NotFound:
+    description: Requested Item Not Found
+    schema:
+      $ref: '#/definitions/Errors'
+  RequestLimitExceeded:
+    description: Request Limit Exceeded
+    schema:
+      $ref: '#/definitions/Errors'
+  InternalServiceError:
+    description: Internal Server Error
+    schema:
+      $ref: '#/definitions/Errors'
+  ServiceUnavailable:
+    description: Service Unavailable
+    schema:
+      $ref: '#/definitions/Errors'
+
